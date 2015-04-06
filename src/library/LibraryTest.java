@@ -118,7 +118,9 @@ public class LibraryTest {
         Patron dave = library.issueCard("Dave");
         Patron paula = library.issueCard("Paula");
         assertEquals(dave, library.serve("Dave"));
-      
+        //add an identical entry, see if it works
+        Patron dave2 = library.issueCard("Dave");
+        assertEquals(dave2, null);
     }
 
   
