@@ -179,13 +179,11 @@ public class Library {
 		else if (j == 0){
 			for (int i=0; i<bookNumberList.length; i++){
 				int num = Integer.parseInt(bookNumberList[i].trim());
-				if (this.numberedListOfSearch.containsKey(num) && isCheckIn){
+				if (this.numberedListOfServing.containsKey(num) && isCheckIn){
 					this.checkIn(num);
-					this.serveOrNot = false;
 				}
 				else if (this.numberedListOfSearch.containsKey(num) && ! isCheckIn){
 					this.checkOut(num);
-					this.serveOrNot = false;
 					this.searchOrNot = false;
 				}
 				else{
@@ -427,6 +425,9 @@ public class Library {
 			else{
 				this.println("Number"+number +" is out of range! Please enter the number in range!!");
 			}
+		}
+		for (int i = 0;i < (this.servingPatron.getBooks().size());i++){
+			this.numberedListOfServing.put(i+1, this.servingPatron.getBooks().get(i));
 		}
 		return checkOutBooks;
 	}
