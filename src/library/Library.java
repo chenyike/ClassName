@@ -131,54 +131,7 @@ public class Library {
 			else{
 				String[] bookNumberList = bookNumbers.split(",");
 				//To check the number of input numbers first, and distinguish based on the length of the bookNumberList
-				if (bookNumberList.length == 1){
-					int num = Integer.parseInt(bookNumberList[0].trim()); 
-					if (this.numberedListOfServing.containsKey(num)){
-						this.checkIn(num);
-						//Make this instance variable be false 
-						//to make sure serving one patron before checkIn
-						this.serveOrNot = false;
-					}
-					else{
-						this.println("Number "+ num + " is out of range!");
-					}
-				}					
-				else if (bookNumberList.length == 2){
-					int num1 = Integer.parseInt(bookNumberList[0].trim()); 
-					int num2 = Integer.parseInt(bookNumberList[1].trim()); 
-					if (this.numberedListOfServing.containsKey(num1) && this.numberedListOfServing.containsKey(num2)){
-						this.checkIn(num1);
-						this.checkIn(num2);
-						this.serveOrNot = false;
-					}
-					else if (!this.numberedListOfServing.containsKey(num1)){
-						this.println("Number "+ num1 + " is out of range!");
-					}
-					else if (!this.numberedListOfServing.containsKey(num2)){
-						this.println("Number "+ num2 + " is out of range!");
-					}
-				}
-				else if (bookNumberList.length == 3){
-					int num1 = Integer.parseInt(bookNumberList[0].trim()); 
-					int num2 = Integer.parseInt(bookNumberList[1].trim()); 
-					int num3 = Integer.parseInt(bookNumberList[2].trim()); 
-					if (this.numberedListOfServing.containsKey(num1) && this.numberedListOfServing.containsKey(num2) &&
-							this.numberedListOfServing.containsKey(num3)){
-						this.checkIn(num1);
-						this.checkIn(num2);
-						this.checkIn(num3);
-						this.serveOrNot = false;
-					}
-					else if (!this.numberedListOfServing.containsKey(num1)){
-						this.println("Number "+ num1 + " is out of range!");
-					}
-					else if (!this.numberedListOfServing.containsKey(num2)){
-						this.println("Number "+ num2 + " is out of range!");
-					}
-					else if (!this.numberedListOfServing.containsKey(num3)){
-						this.println("Number "+ num3 + " is out of range!");
-					}
-				}
+				checkNum(bookNumberList, true);
 			}	
 		}
 	}
@@ -202,62 +155,31 @@ public class Library {
 			else{
 				String[] bookNumberList = bookNumbers.split(",");
 				//Check The number of the input numbers first
-				if (bookNumberList.length == 1){
-					int num = Integer.parseInt(bookNumberList[0].trim()); 
-					if(this.numberedListOfSearch.containsKey(num)){
-						this.checkOut(num);
-						//Make these two instance variables be false 
-						//to make sure serving one patron and the librarian has searched before checking Out
-						this.serveOrNot = false;
-						this.searchOrNot = false;
-					}
-					else{
-						this.println("Number "+ num + " is out of range!");
-					}
-				}
-				else if (bookNumberList.length == 2){
-					int num1 = Integer.parseInt(bookNumberList[0].trim()); 
-					int num2 = Integer.parseInt(bookNumberList[1].trim()); 
-					if(this.numberedListOfSearch.containsKey(num1) && this.numberedListOfSearch.containsKey(num2)){
-						this.checkOut(num1);
-						this.checkOut(num2);
-						this.serveOrNot = false;
-						this.searchOrNot = false;
-					}
-					else if(!this.numberedListOfSearch.containsKey(num1)){
-						this.println("Number "+ num1 + " is out of range!");
-					}
-					else if(!this.numberedListOfSearch.containsKey(num2)){
-						this.println("Number "+ num2 + " is out of range!");
-					}
-				}
-				else if (bookNumberList.length == 3){
-					int num1 = Integer.parseInt(bookNumberList[0].trim()); 
-					int num2 = Integer.parseInt(bookNumberList[1].trim()); 
-					int num3 = Integer.parseInt(bookNumberList[2].trim()); 
-					if(this.numberedListOfSearch.containsKey(num1) && this.numberedListOfSearch.containsKey(num2) &&
-							this.numberedListOfSearch.containsKey(num3)){
-						this.checkOut(num1);
-						this.checkOut(num2);
-						this.checkOut(num3);
-						this.serveOrNot = false;
-						this.searchOrNot = false;
-					}
-					else if(!this.numberedListOfSearch.containsKey(num1)){
-						this.println("Number "+ num1 + " is out of range!");
-					}
-					else if(!this.numberedListOfSearch.containsKey(num2)){
-						this.println("Number "+ num2 + " is out of range!");
-					}
-					else if(!this.numberedListOfSearch.containsKey(num3)){
-						this.println("Number "+ num3 + " is out of range!");
-					}
+				if (bookNumberList.length <= 3){
+					checkNum(bookNumberList, false);
 				}
 				else{
 					this.println("No more than 3 books at a time!!!");
 				}
 			}
+		}
+	}
 
+	void checkNum(String[] bookNumberList,boolean isCheckIn){
+		for (int i=0; i<bookNumberList.length; i++){
+			int num = Integer.parseInt(bookNumberList[i].trim());
+			if (this.numberedListOfSearch.containsKey(num) && isCheckIn){
+				this.checkIn(num);
+				this.serveOrNot = false;
+			}
+			else if (this.numberedListOfSearch.containsKey(num) && ! isCheckIn){
+				this.checkOut(num);
+				this.serveOrNot = false;
+				this.searchOrNot = false;
+			}
+			else{
+				this.println("Number "+ num + " is out of range!");
+			}
 		}
 	}
 
