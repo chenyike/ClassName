@@ -116,8 +116,9 @@ public class Library {
 	}
 
 	/**
-	 * To execute checkIn process in start method
-	 * @param newCommand
+	 *Before implementing checkIn, we need to check if the patron is served or not, 
+	 *if he/she is served, we extract the numberlist, then use checkNum function to see if the numberlist is out of range or not
+	 *if everything is corrent, within the checkNum function, we implement checkIn
 	 */
 	public void toCheckIn(String newCommand){
 		if(this.serveOrNot == false){
@@ -130,7 +131,7 @@ public class Library {
 			}
 			else{
 				String[] bookNumberList = bookNumbers.split(",");
-				//To check the number of input numbers first, and distinguish based on the length of the bookNumberList
+				//check see if the numberlist is out of range or not, if everything is correct, within the checkNum function, we implement checkIn
 				checkNum(bookNumberList, true);
 			}   
 		}
@@ -138,8 +139,9 @@ public class Library {
 	}
 
 	/**
-	 * To execute checkOut process in start method!
-	 * @param newCommand
+	 *Before implementing checkOut, we need to check if the patron is served or not, 
+	 *if he/she is served, we extract the numberlist, then use checkNum function to see if the numberlist is out of range or not
+	 *if everything is corrent, within the checkNum function, we implement checkOut
 	 */
 	public void toCheckOut(String newCommand){
 		if (this.serveOrNot == false ){
@@ -155,7 +157,7 @@ public class Library {
 			}
 			else{
 				String[] bookNumberList = bookNumbers.split(",");
-				//Check The number of the input numbers first
+				//check see if the numberlist is out of range or not, if everything is correct, within the checkNum function, we implement checkOut
 				if (bookNumberList.length <= 3){
 					checkNum(bookNumberList, false);
 				}
@@ -168,10 +170,7 @@ public class Library {
 	}
 
 	/**
-	 * To check the number of the numbers that user input
-	 * And execute checkIn or checkOut according to the boolean isCheckIn is true or not. 
-	 * @param bookNumberList
-	 * @param isCheckIn
+	 *Check the bookNumberList is out of range or not, if everything is correct, then we implement checkIn/checkOut
 	 */
 	void checkNum(String[] bookNumberList,boolean isCheckIn){
 		int j = 0;
@@ -292,7 +291,7 @@ public class Library {
 	}
 
 	/**
-	 * A function merely print out the patron's information
+	 * A function merely prints out the patron's information
 	 */
 	String printPatronInfo(){
 		String printingStr = "";
@@ -328,6 +327,7 @@ public class Library {
 			this.servingPatron = this.patron.get(nameOfPatron);
 			//check whether the patron has check out books!
 			this.println(nameOfPatron + " is being served!");
+			//print out patron's information
 			this.println(printPatronInfo());
 			return this.servingPatron;
 		}
@@ -362,6 +362,7 @@ public class Library {
 		return checkInBooks;
 	}
 
+	
 	/**
 	 * Printing out and saving in an instance variable, an ArrayList<Book> of books 
 	 * whose title or author (or both) contains this string.
