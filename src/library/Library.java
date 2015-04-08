@@ -107,7 +107,7 @@ public class Library {
 				//close library
 				else if (newCommand.equals("close")){
 					this.close();
-				}	
+				}   
 				else {
 					this.println("Please enter the right command!!");
 				}
@@ -132,7 +132,7 @@ public class Library {
 				String[] bookNumberList = bookNumbers.split(",");
 				//To check the number of input numbers first, and distinguish based on the length of the bookNumberList
 				checkNum(bookNumberList, true);
-			}	
+			}   
 		}
 		this.println(printPatronInfo());
 	}
@@ -167,34 +167,54 @@ public class Library {
 		this.println(printPatronInfo());
 	}
 
+	/**
+	 * To check the number of the numbers that user input
+	 * And execute checkIn or checkOut according to the boolean isCheckIn is true or not. 
+	 * @param bookNumberList
+	 * @param isCheckIn
+	 */
 	void checkNum(String[] bookNumberList,boolean isCheckIn){
 		int j = 0;
+		//check Duplicate
+		if(bookNumberList.length == 2){
+			if(Integer.parseInt(bookNumberList[0].trim())==Integer.parseInt(bookNumberList[1].trim()) ){
+				j++;
+			}
+		}
+		//check Duplicate
+		if(bookNumberList.length == 3 ){
+			if(Integer.parseInt(bookNumberList[0].trim())==Integer.parseInt(bookNumberList[2].trim()) || Integer.parseInt(bookNumberList[0].trim())==Integer.parseInt(bookNumberList[1].trim()) || Integer.parseInt(bookNumberList[1].trim())==Integer.parseInt(bookNumberList[2].trim())){
+				j++;
+			}
+		}
+		//check if the input numbers are all in numberedListOfSearch or not
 		for (int i=0; i<bookNumberList.length; i++){
 			int num = Integer.parseInt(bookNumberList[i].trim());
 			if (! this.numberedListOfSearch.containsKey(num) ){
 				j ++;
 			}
 		}
-		if (j > 0){
-			this.print("Number out of range, please check your input. ");
-		}
-		else if (j == 0){
-			for (int i=0; i<bookNumberList.length; i++){
-				int num = Integer.parseInt(bookNumberList[i].trim());
-				if (this.numberedListOfServing.containsKey(num) && isCheckIn){
-					this.checkIn(num);
+		//If input check is correct, implement checkIn or checkOut function
+		if (j == 0){
+			for (int k=0; k<bookNumberList.length; k++){
+				int number = Integer.parseInt(bookNumberList[k].trim());
+				if (this.numberedListOfServing.containsKey(number) && isCheckIn){
+					this.checkIn(number);
 				}
-				else if (this.numberedListOfSearch.containsKey(num) && ! isCheckIn){
-					this.checkOut(num);
+				else if (this.numberedListOfSearch.containsKey(number) && ! isCheckIn){
+					this.checkOut(number);
 					this.searchOrNot = false;
 				}
 				else{
-					this.println("Number "+ num + " is out of range!");
+					this.println("Number "+ number + " is out of range!");
 				}
 			}
 		}
+		//if input is wrong, then print error message
+		else{
+			this.println("At least one number are out of range, please check your input!");
+		}
 	}
-
 
 	/**
 	 * If okToPrint is true, prints the message
@@ -228,7 +248,7 @@ public class Library {
 		ArrayList<OverdueNotice> overdueList = this.createOverdueNotices();
 		for (OverdueNotice notice : overdueList){
 			this.println(notice.toString());
-		}			
+		}           
 		return  overdueList;
 	}
 
@@ -272,11 +292,8 @@ public class Library {
 	}
 
 	/**
-	 * Begin checking books out to (or in from) the named patron.
-	 * @param nameOfPatron
-	 * @return
+	 * A function merely print out the patron's information
 	 */
-
 	String printPatronInfo(){
 		String printingStr = "";
 		if (this.servingPatron.getBooks().size() > 0){
@@ -284,7 +301,7 @@ public class Library {
 			printingStr += '\n';
 			printingStr += "{";
 			for (int i = 0;i < (this.servingPatron.getBooks().size());i++){
-				this.numberedListOfServing.put(i+1, this.servingPatron.getBooks().get(i));	
+				this.numberedListOfServing.put(i+1, this.servingPatron.getBooks().get(i));
 				//print the numbered list out!
 				printingStr += (i+1);
 				printingStr += " : ";
@@ -292,7 +309,7 @@ public class Library {
 				printingStr += "; ";
 			}
 			printingStr = printingStr.substring(0, printingStr.length()-2);
-			printingStr += "}";	
+			printingStr += "}";
 		}
 		else {
 			printingStr = "This patron currently possesses no book. ";
@@ -300,12 +317,15 @@ public class Library {
 		return printingStr;
 	}
 
+	/**
+	 * serve the patron
+	 */
 	public Patron serve(String nameOfPatron){
 		this.numberedListOfServing = new HashMap<Integer, Book>();
 
 		//Check whether the patron has a card
-		if (this.patron.containsKey(nameOfPatron)){		
-			this.servingPatron = this.patron.get(nameOfPatron);	
+		if (this.patron.containsKey(nameOfPatron)){
+			this.servingPatron = this.patron.get(nameOfPatron);
 			//check whether the patron has check out books!
 			this.println(nameOfPatron + " is being served!");
 			this.println(printPatronInfo());
@@ -328,17 +348,17 @@ public class Library {
 		ArrayList<Book> checkInBooks = new ArrayList<Book>();
 		for (int number : bookNumbers){
 			if(this.numberedListOfServing.containsKey(number)){
-				this.numberedListOfServing.get(number).checkIn();;
+				this.numberedListOfServing.get(number).checkIn();
 				this.libraryBooks.add(this.numberedListOfServing.get(number));
 				checkInBooks.add(this.numberedListOfServing.get(number));
 				this.servingPatron.giveBack(this.numberedListOfServing.get(number));
 				this.println(this.numberedListOfServing.get(number).getTitle()+" Check In successfully!");
+				this.numberedListOfServing.remove(number);
 			}
 			else{
 				this.println("Number "+number +" is out of range! Please enter the number in range!!");
 			}
-		}		
-		
+		}           
 		return checkInBooks;
 	}
 
@@ -348,7 +368,7 @@ public class Library {
 	 * @param part
 	 * @return
 	 */
-	public ArrayList<Book> search(String part){	
+	public ArrayList<Book> search(String part){ 
 		this.searchBooks = new ArrayList<Book>();
 		this.numberedListOfSearch = new HashMap<Integer, Book>();
 		if (part.length()>=4){
@@ -374,7 +394,7 @@ public class Library {
 			//To put into a numbered list for printing
 			//No duplicating for books having the same title
 			for (int i =0; i < (this.searchBooks.size());i++){
-				// put the book in the HashMap for printing				
+				// put the book in the HashMap for printing             
 				this.numberedListOfSearch.put(i+1, this.searchBooks.get(i));
 			}
 
@@ -391,7 +411,7 @@ public class Library {
 					researchBooks += "; ";
 				}
 				researchBooks = researchBooks.substring(0, researchBooks.length()-2);
-				researchBooks += "}";			
+				researchBooks += "}";           
 			}
 			//if the numbered list is empty
 			else if ( this.numberedListOfSearch.size() == 0){
@@ -422,8 +442,9 @@ public class Library {
 					this.libraryBooks.remove(this.numberedListOfSearch.get(number));
 					this.numberedListOfSearch.get(number).checkOut(this.calendar.getDate()+7);
 					this.servingPatron.take(this.numberedListOfSearch.get(number));
-					checkOutBooks.add(this.numberedListOfSearch.get(number));	
+					checkOutBooks.add(this.numberedListOfSearch.get(number));   
 					this.println( this.numberedListOfSearch.get(number).getTitle()+" check out successfully!");
+					this.numberedListOfSearch.remove(number);
 				}
 				else{
 					this.println("The patron already have checked out 3 books!!! No more books!");
@@ -433,6 +454,7 @@ public class Library {
 				this.println("Number"+number +" is out of range! Please enter the number in range!!");
 			}
 		}
+		//Update the serving HashMap!
 		for (int i = 0;i < (this.servingPatron.getBooks().size());i++){
 			this.numberedListOfServing.put(i+1, this.servingPatron.getBooks().get(i));
 		}
