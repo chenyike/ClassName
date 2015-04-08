@@ -166,19 +166,31 @@ public class Library {
 	}
 
 	void checkNum(String[] bookNumberList,boolean isCheckIn){
+		int j = 0;
 		for (int i=0; i<bookNumberList.length; i++){
 			int num = Integer.parseInt(bookNumberList[i].trim());
-			if (this.numberedListOfSearch.containsKey(num) && isCheckIn){
-				this.checkIn(num);
-				this.serveOrNot = false;
+			if (! this.numberedListOfSearch.containsKey(num) ){
+				j ++;
 			}
-			else if (this.numberedListOfSearch.containsKey(num) && ! isCheckIn){
-				this.checkOut(num);
-				this.serveOrNot = false;
-				this.searchOrNot = false;
-			}
-			else{
-				this.println("Number "+ num + " is out of range!");
+		}
+		if (j > 0){
+			this.print("Number out of range, please check your input. ");
+		}
+		else if (j == 0){
+			for (int i=0; i<bookNumberList.length; i++){
+				int num = Integer.parseInt(bookNumberList[i].trim());
+				if (this.numberedListOfSearch.containsKey(num) && isCheckIn){
+					this.checkIn(num);
+					this.serveOrNot = false;
+				}
+				else if (this.numberedListOfSearch.containsKey(num) && ! isCheckIn){
+					this.checkOut(num);
+					this.serveOrNot = false;
+					this.searchOrNot = false;
+				}
+				else{
+					this.println("Number "+ num + " is out of range!");
+				}
 			}
 		}
 	}
