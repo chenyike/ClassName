@@ -135,7 +135,9 @@ public class Library {
 				checkNum(bookNumberList, true);
 			}   
 		}
-		this.println(printPatronInfo());
+		if (this.serveOrNot){
+			this.println(printPatronInfo());
+		}
 	}
 
 	/**
@@ -166,7 +168,9 @@ public class Library {
 				}
 			}
 		}
-		this.println(printPatronInfo());
+		if (this.serveOrNot){
+			this.println(printPatronInfo());
+		}
 	}
 
 	/**
@@ -362,7 +366,7 @@ public class Library {
 		return checkInBooks;
 	}
 
-	
+
 	/**
 	 * Printing out and saving in an instance variable, an ArrayList<Book> of books 
 	 * whose title or author (or both) contains this string.
