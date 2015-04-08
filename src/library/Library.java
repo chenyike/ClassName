@@ -12,6 +12,8 @@ public class Library {
 	private HashMap<Integer, Book> numberedListOfServing;
 	private ArrayList<Book> searchBooks;
 	private HashMap<Integer, Book> numberedListOfSearch;
+	private boolean serveOrNot;
+	private boolean searchOrNot;
 
 	/**
 	 * The constructor for the class
@@ -25,6 +27,8 @@ public class Library {
 		this.numberedListOfServing = new HashMap<Integer, Book>();
 		this.searchBooks = new ArrayList<Book>();
 		this.numberedListOfSearch = new HashMap<Integer, Book>();
+		this.serveOrNot = false;
+		this.searchOrNot = false;
 	}
 
 	/**
@@ -40,6 +44,8 @@ public class Library {
 		this.numberedListOfServing = new HashMap<Integer, Book>();
 		this.searchBooks = new ArrayList<Book>();
 		this.numberedListOfSearch = new HashMap<Integer, Book>();
+		this.serveOrNot = false;
+		this.searchOrNot = false;
 	}
 
 
@@ -58,91 +64,202 @@ public class Library {
 			}
 			else{
 				//open
-				if (newCommand.equals("open")){
+				if (newCommand.equals("open") && !this.openOrNot){
 					this.open();
+				}
+				else if (newCommand.equals("open") && this.openOrNot){
+					this.println("The Library has already been open!!!");
 				}
 				else if ((!newCommand.equals("open")) && (!this.openOrNot)){
 					this.println("Library is closed! No operations allowed!");
 				}
 
 				//issue card
-				if (newCommand.contains("issueCard") && this.openOrNot){
+				else if (newCommand.contains("issueCard") && this.openOrNot){
 					String nameOfPatron = newCommand.substring(9).trim();
 					this.issueCard(nameOfPatron);
 				}
 
 				//serve patron
-				if (newCommand.contains("serve") && this.openOrNot){
+				else if (newCommand.contains("serve") && this.openOrNot){
 					String nameOfPatron = newCommand.substring(5).trim();
 					this.serve(nameOfPatron);
+					this.serveOrNot = true;
 				}
 
-				//check in
-				if (newCommand.contains("checkIn") && this.openOrNot){
-					String bookNumbers = newCommand.substring(7).trim();
-					String[] bookNumberList = bookNumbers.split(",");
-					if (bookNumberList.length == 1){
-						int num = Integer.parseInt(bookNumberList[0].trim()); 
-						this.checkIn(num);
-					}
-					else if (bookNumberList.length == 2){
-						int num1 = Integer.parseInt(bookNumberList[0].trim()); 
-						int num2 = Integer.parseInt(bookNumberList[1].trim()); 
-						this.checkIn(num1);
-						this.checkIn(num2);
-					}
-					else if (bookNumberList.length == 3){
-						int num1 = Integer.parseInt(bookNumberList[0].trim()); 
-						int num2 = Integer.parseInt(bookNumberList[1].trim()); 
-						int num3 = Integer.parseInt(bookNumberList[1].trim()); 
-						this.checkIn(num1);
-						this.checkIn(num2);
-						this.checkIn(num3);
-					}
+				//check in (In the form of "checkIn 1,2,3")
+				else if (newCommand.contains("checkIn") && this.openOrNot){
+					this.toCheckIn(newCommand);
 				}
-
 
 				//search books
-				if (newCommand.contains("search") && this.openOrNot){
+				else if (newCommand.contains("search") && this.openOrNot){
 					String nameOfBooks = newCommand.substring(6).trim();
 					this.search(nameOfBooks);
+					this.searchOrNot = true;
 				}
 
-				//check out
-				if (newCommand.contains("checkOut") && this.openOrNot){
-					String bookNumbers = newCommand.substring(8).trim();
-					String[] bookNumberList = bookNumbers.split(",");
-					if (bookNumberList.length == 1){
-						int num = Integer.parseInt(bookNumberList[0].trim()); 
-						this.checkOut(num);
-					}
-					else if (bookNumberList.length == 2){
-						int num1 = Integer.parseInt(bookNumberList[0].trim()); 
-						int num2 = Integer.parseInt(bookNumberList[1].trim()); 
-						this.checkOut(num1);
-						this.checkOut(num2);
-					}
-					else if (bookNumberList.length == 3){
-						int num1 = Integer.parseInt(bookNumberList[0].trim()); 
-						int num2 = Integer.parseInt(bookNumberList[1].trim()); 
-						int num3 = Integer.parseInt(bookNumberList[1].trim()); 
-						this.checkOut(num1);
-						this.checkOut(num2);
-						this.checkOut(num3);
-					}
-					else{
-						this.println("No more than 3 books at a time!!!");
-					}
+				//check out (In the form of "checkOut 1,2,3")
+				else if (newCommand.contains("checkOut") && this.openOrNot){
+					this.toCheckOut(newCommand);
 				}
 
 				//close library
-				if (newCommand.equals("close")){
+				else if (newCommand.equals("close")){
 					this.close();
-				}       
+				}	
+				else {
+					this.println("Please enter the right command!!");
+				}
 			}
 		}
 	}
 
+	/**
+	 * To execute checkIn process in start method
+	 * @param newCommand
+	 */
+	public void toCheckIn(String newCommand){
+		if(this.serveOrNot == false){
+			this.println("Please serve first!");
+		}
+		else{
+			String bookNumbers = newCommand.substring(7).trim();
+			if (bookNumbers.length() == 0){
+				this.println("Please enter the book number to check in!");
+			}
+			else{
+				String[] bookNumberList = bookNumbers.split(",");
+				//To check the number of input numbers first, and distinguish based on the length of the bookNumberList
+				if (bookNumberList.length == 1){
+					int num = Integer.parseInt(bookNumberList[0].trim()); 
+					if (this.numberedListOfServing.containsKey(num)){
+						this.checkIn(num);
+						//Make this instance variable be false 
+						//to make sure serving one patron before checkIn
+						this.serveOrNot = false;
+					}
+					else{
+						this.println("Number "+ num + " is out of range!");
+					}
+				}					
+				else if (bookNumberList.length == 2){
+					int num1 = Integer.parseInt(bookNumberList[0].trim()); 
+					int num2 = Integer.parseInt(bookNumberList[1].trim()); 
+					if (this.numberedListOfServing.containsKey(num1) && this.numberedListOfServing.containsKey(num2)){
+						this.checkIn(num1);
+						this.checkIn(num2);
+						this.serveOrNot = false;
+					}
+					else if (!this.numberedListOfServing.containsKey(num1)){
+						this.println("Number "+ num1 + " is out of range!");
+					}
+					else if (!this.numberedListOfServing.containsKey(num2)){
+						this.println("Number "+ num2 + " is out of range!");
+					}
+				}
+				else if (bookNumberList.length == 3){
+					int num1 = Integer.parseInt(bookNumberList[0].trim()); 
+					int num2 = Integer.parseInt(bookNumberList[1].trim()); 
+					int num3 = Integer.parseInt(bookNumberList[2].trim()); 
+					if (this.numberedListOfServing.containsKey(num1) && this.numberedListOfServing.containsKey(num2) &&
+							this.numberedListOfServing.containsKey(num3)){
+						this.checkIn(num1);
+						this.checkIn(num2);
+						this.checkIn(num3);
+						this.serveOrNot = false;
+					}
+					else if (!this.numberedListOfServing.containsKey(num1)){
+						this.println("Number "+ num1 + " is out of range!");
+					}
+					else if (!this.numberedListOfServing.containsKey(num2)){
+						this.println("Number "+ num2 + " is out of range!");
+					}
+					else if (!this.numberedListOfServing.containsKey(num3)){
+						this.println("Number "+ num3 + " is out of range!");
+					}
+				}
+			}	
+		}
+	}
+
+	/**
+	 * To execute checkOut process in start method!
+	 * @param newCommand
+	 */
+	public void toCheckOut(String newCommand){
+		if (this.serveOrNot == false ){
+			this.println("Please serve first!");
+		}
+		else if(this.searchOrNot == false){
+			this.println("Please search first!");
+		}
+		else{
+			String bookNumbers = newCommand.substring(8).trim();
+			if (bookNumbers.length() == 0){
+				this.println("Please enter the book number to check out!");
+			}
+			else{
+				String[] bookNumberList = bookNumbers.split(",");
+				//Check The number of the input numbers first
+				if (bookNumberList.length == 1){
+					int num = Integer.parseInt(bookNumberList[0].trim()); 
+					if(this.numberedListOfSearch.containsKey(num)){
+						this.checkOut(num);
+						//Make these two instance variables be false 
+						//to make sure serving one patron and the librarian has searched before checking Out
+						this.serveOrNot = false;
+						this.searchOrNot = false;
+					}
+					else{
+						this.println("Number "+ num + " is out of range!");
+					}
+				}
+				else if (bookNumberList.length == 2){
+					int num1 = Integer.parseInt(bookNumberList[0].trim()); 
+					int num2 = Integer.parseInt(bookNumberList[1].trim()); 
+					if(this.numberedListOfSearch.containsKey(num1) && this.numberedListOfSearch.containsKey(num2)){
+						this.checkOut(num1);
+						this.checkOut(num2);
+						this.serveOrNot = false;
+						this.searchOrNot = false;
+					}
+					else if(!this.numberedListOfSearch.containsKey(num1)){
+						this.println("Number "+ num1 + " is out of range!");
+					}
+					else if(!this.numberedListOfSearch.containsKey(num2)){
+						this.println("Number "+ num2 + " is out of range!");
+					}
+				}
+				else if (bookNumberList.length == 3){
+					int num1 = Integer.parseInt(bookNumberList[0].trim()); 
+					int num2 = Integer.parseInt(bookNumberList[1].trim()); 
+					int num3 = Integer.parseInt(bookNumberList[2].trim()); 
+					if(this.numberedListOfSearch.containsKey(num1) && this.numberedListOfSearch.containsKey(num2) &&
+							this.numberedListOfSearch.containsKey(num3)){
+						this.checkOut(num1);
+						this.checkOut(num2);
+						this.checkOut(num3);
+						this.serveOrNot = false;
+						this.searchOrNot = false;
+					}
+					else if(!this.numberedListOfSearch.containsKey(num1)){
+						this.println("Number "+ num1 + " is out of range!");
+					}
+					else if(!this.numberedListOfSearch.containsKey(num2)){
+						this.println("Number "+ num2 + " is out of range!");
+					}
+					else if(!this.numberedListOfSearch.containsKey(num3)){
+						this.println("Number "+ num3 + " is out of range!");
+					}
+				}
+				else{
+					this.println("No more than 3 books at a time!!!");
+				}
+			}
+
+		}
+	}
 
 
 	/**
@@ -177,7 +294,7 @@ public class Library {
 		ArrayList<OverdueNotice> overdueList = this.createOverdueNotices();
 		for (OverdueNotice notice : overdueList){
 			this.println(notice.toString());
-		}           
+		}			
 		return  overdueList;
 	}
 
@@ -229,13 +346,15 @@ public class Library {
 		this.numberedListOfServing = new HashMap<Integer, Book>();
 		String printingStr = "";
 		//Check whether the patron has a card
-		if (this.patron.containsKey(nameOfPatron)){             
-			this.servingPatron = this.patron.get(nameOfPatron); 
+		if (this.patron.containsKey(nameOfPatron)){				
+			this.servingPatron = this.patron.get(nameOfPatron);	
 			//check whether the patron has check out books!
 			if (this.servingPatron.getBooks().size() > 0){
+				printingStr += "The books currently checked out to this patron are:";
+				printingStr += '\n';
 				printingStr += "{";
 				for (int i = 0;i < (this.servingPatron.getBooks().size());i++){
-					this.numberedListOfServing.put(i+1, this.servingPatron.getBooks().get(i));  
+					this.numberedListOfServing.put(i+1, this.servingPatron.getBooks().get(i));	
 					//print the numbered list out!
 					printingStr += (i+1);
 					printingStr += " : ";
@@ -243,7 +362,7 @@ public class Library {
 					printingStr += "; ";
 				}
 				printingStr = printingStr.substring(0, printingStr.length()-2);
-				printingStr += "}"; 
+				printingStr += "}";	
 				this.println(nameOfPatron + " is being served!");
 				this.println(printingStr);
 			}
@@ -253,7 +372,7 @@ public class Library {
 				this.println("No check out book!!!");
 			}
 			return this.servingPatron;
-		}   
+		}	
 		//if the patron does not have a card
 		else{
 			this.println(nameOfPatron + " does not have a card!");
@@ -270,14 +389,17 @@ public class Library {
 	public ArrayList<Book> checkIn(int... bookNumbers){
 		ArrayList<Book> checkInBooks = new ArrayList<Book>();
 		for (int number : bookNumbers){
-			if (number <= 1 ){  //////////////////////////////////////////////////
+			if(this.numberedListOfServing.containsKey(number)){
 				this.numberedListOfServing.get(number).checkIn();;
 				this.libraryBooks.add(this.numberedListOfServing.get(number));
 				checkInBooks.add(this.numberedListOfServing.get(number));
 				this.servingPatron.giveBack(this.numberedListOfServing.get(number));
+				this.println(this.numberedListOfServing.get(number).getTitle()+" Check In successfully!");
 			}
-		}
-		this.println("Check In process has finished!");
+			else{
+				this.println("Number "+number +" is out of range! Please enter the number in range!!");
+			}
+		}			
 		return checkInBooks;
 	}
 
@@ -287,7 +409,7 @@ public class Library {
 	 * @param part
 	 * @return
 	 */
-	public ArrayList<Book> search(String part){ 
+	public ArrayList<Book> search(String part){	
 		this.searchBooks = new ArrayList<Book>();
 		this.numberedListOfSearch = new HashMap<Integer, Book>();
 		if (part.length()>=4){
@@ -296,7 +418,7 @@ public class Library {
 			boolean bookExist = false;
 			for (Book book : this.libraryBooks){
 				if ((book.getTitle().toLowerCase().contains(part.toLowerCase())) || (book.getAuthor().toLowerCase().contains(part.toLowerCase()))){
-					//Check if there are any books sharing the same title in the list
+					//Check whether any books having the same title in the list
 					for (Book bookSearch : this.searchBooks){
 						if (bookSearch.getTitle().equals(book.getTitle())){
 							bookExist = true;
@@ -313,7 +435,7 @@ public class Library {
 			//To put into a numbered list for printing
 			//No duplicating for books having the same title
 			for (int i =0; i < (this.searchBooks.size());i++){
-				// put the book in the HashMap for printing             
+				// put the book in the HashMap for printing				
 				this.numberedListOfSearch.put(i+1, this.searchBooks.get(i));
 			}
 
@@ -330,7 +452,7 @@ public class Library {
 					researchBooks += "; ";
 				}
 				researchBooks = researchBooks.substring(0, researchBooks.length()-2);
-				researchBooks += "}";           
+				researchBooks += "}";			
 			}
 			//if the numbered list is empty
 			else if ( this.numberedListOfSearch.size() == 0){
@@ -341,7 +463,7 @@ public class Library {
 
 		//If not enough input key words!
 		else{
-			this.println("Please enter more key words!");
+			this.println("Please enter more key words! At least four!!");
 		}
 		return this.searchBooks;
 	}
@@ -356,15 +478,20 @@ public class Library {
 		ArrayList<Book> checkOutBooks = new ArrayList<Book>();
 		for (int number : bookNumbers){
 			//No more than 3 books allowed!
-			if(this.servingPatron.getBooks().size()<3){
-				this.libraryBooks.remove(this.numberedListOfSearch.get(number));
-				this.numberedListOfSearch.get(number).checkOut(this.calendar.getDate()+7);
-				this.servingPatron.take(this.numberedListOfSearch.get(number));
-				checkOutBooks.add(this.numberedListOfSearch.get(number));   
-				this.println("One book check out successfully!");
+			if(this.numberedListOfSearch.containsKey(number)){
+				if(this.servingPatron.getBooks().size()<3){
+					this.libraryBooks.remove(this.numberedListOfSearch.get(number));
+					this.numberedListOfSearch.get(number).checkOut(this.calendar.getDate()+7);
+					this.servingPatron.take(this.numberedListOfSearch.get(number));
+					checkOutBooks.add(this.numberedListOfSearch.get(number));	
+					this.println( this.numberedListOfSearch.get(number).getTitle()+" check out successfully!");
+				}
+				else{
+					this.println("The patron already have checked out 3 books!!! No more books!");
+				}
 			}
 			else{
-				this.println("The patron already have checked out 3 books!!! No more books!");
+				this.println("Number"+number +" is out of range! Please enter the number in range!!");
 			}
 		}
 		return checkOutBooks;
@@ -405,13 +532,14 @@ public class Library {
 	}
 
 
+
 	/**
-	 * @return the openOrNot
+	 * get the open or not
+	 * @return
 	 */
 	public boolean isOpenOrNot() {
-		return openOrNot;
+		return this.openOrNot;
 	}
-
 
 	/**
 	 * The main function
@@ -446,7 +574,5 @@ public class Library {
 		}
 		return collection;
 	}
-
-
 
 }
