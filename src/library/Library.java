@@ -134,6 +134,7 @@ public class Library {
 				checkNum(bookNumberList, true);
 			}	
 		}
+		this.println(printPatronInfo());
 	}
 
 	/**
@@ -163,6 +164,7 @@ public class Library {
 				}
 			}
 		}
+		this.println(printPatronInfo());
 	}
 
 	void checkNum(String[] bookNumberList,boolean isCheckIn){
@@ -274,39 +276,43 @@ public class Library {
 	 * @param nameOfPatron
 	 * @return
 	 */
+
+	String printPatronInfo(){
+		String printingStr = "";
+		if (this.servingPatron.getBooks().size() > 0){
+			printingStr += "The books currently checked out to this patron are:";
+			printingStr += '\n';
+			printingStr += "{";
+			for (int i = 0;i < (this.servingPatron.getBooks().size());i++){
+				this.numberedListOfServing.put(i+1, this.servingPatron.getBooks().get(i));	
+				//print the numbered list out!
+				printingStr += (i+1);
+				printingStr += " : ";
+				printingStr += this.servingPatron.getBooks().get(i).toString();
+				printingStr += "; ";
+			}
+			printingStr = printingStr.substring(0, printingStr.length()-2);
+			printingStr += "}";	
+		}
+		else {
+			printingStr = "This patron currently possesses no book. ";
+		}
+		return printingStr;
+	}
+
 	public Patron serve(String nameOfPatron){
 		this.numberedListOfServing = new HashMap<Integer, Book>();
-		String printingStr = "";
+
 		//Check whether the patron has a card
-		if (this.patron.containsKey(nameOfPatron)){				
+		if (this.patron.containsKey(nameOfPatron)){		
 			this.servingPatron = this.patron.get(nameOfPatron);	
 			//check whether the patron has check out books!
-			if (this.servingPatron.getBooks().size() > 0){
-				printingStr += "The books currently checked out to this patron are:";
-				printingStr += '\n';
-				printingStr += "{";
-				for (int i = 0;i < (this.servingPatron.getBooks().size());i++){
-					this.numberedListOfServing.put(i+1, this.servingPatron.getBooks().get(i));	
-					//print the numbered list out!
-					printingStr += (i+1);
-					printingStr += " : ";
-					printingStr += this.servingPatron.getBooks().get(i).toString();
-					printingStr += "; ";
-				}
-				printingStr = printingStr.substring(0, printingStr.length()-2);
-				printingStr += "}";	
-				this.println(nameOfPatron + " is being served!");
-				this.println(printingStr);
-			}
-			else{
-				//if no check out books
-				this.println(nameOfPatron + " is being served!");
-				this.println("No check out book!!!");
-			}
+			this.println(nameOfPatron + " is being served!");
+			this.println(printPatronInfo());
 			return this.servingPatron;
-		}	
+		}
 		//if the patron does not have a card
-		else{
+		else {
 			this.println(nameOfPatron + " does not have a card!");
 			return null;
 		}
@@ -331,7 +337,8 @@ public class Library {
 			else{
 				this.println("Number "+number +" is out of range! Please enter the number in range!!");
 			}
-		}			
+		}		
+		
 		return checkInBooks;
 	}
 
