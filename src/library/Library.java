@@ -55,6 +55,15 @@ public class Library {
      * The start() method for the user
      */
     public void start(){
+    	this.println("Welcome to this digital library! \nPlease choose from the following options and enter them (case sensitive) to proceed your journey: \n"
+        		+ "	open\n"
+        		+ "	issueCard xxx\n"
+        		+ "	serve xxx\n"
+        		+ "	search xxxx\n"
+        		+ "	checkOut x,x,x\n"
+        		+ "	checkIn x,x,x\n"
+        		+ "	close\n"
+        		+ "	quit \n\n");
         while (true){
             Scanner scanner = new Scanner(System.in);
             this.println("Enter a command: ");
@@ -120,7 +129,7 @@ public class Library {
     /**
      *Before implementing checkIn, we need to check if the patron is served or not, 
      *if he/she is served, we extract the numberlist, then use checkNum function to see if the numberlist is out of range or not
-     *if everything is corrent, within the checkNum function, we implement checkIn
+     *if everything is correct, within the checkNum function, we implement checkIn
      */
     public void toCheckIn(String newCommand){
         if(this.serveOrNot == false){
@@ -174,7 +183,7 @@ public class Library {
     }
 
     /**
-     *Check the bookNumberList is out of range or not, if everything is correct, then we implement checkIn/checkOut
+     *Check if the bookNumberList is out of range or not, if everything is correct, we implement checkIn/checkOut
      */
    public void checkNum(String[] bookNumberList,boolean isCheckIn){
         int j = 0;
@@ -258,7 +267,7 @@ public class Library {
     public ArrayList<OverdueNotice> open(){
         this.openOrNot = true;
         this.calendar.advance();
-        this.println("Library has opened today!");
+        this.println("Library is opened today!");
         ArrayList<OverdueNotice> overdueList = this.createOverdueNotices();
         for (OverdueNotice notice : overdueList){
             this.println(notice.toString());
@@ -481,7 +490,7 @@ public class Library {
      * To close the library
      */
     public void close(){
-        this.println("Library has been closed! See you tommorrow morning!!");
+        this.println("Library has been closed! See you tomorrow morning!!");
         this.openOrNot = false;
         this.searchOrNot = false;
         this.serveOrNot = false;

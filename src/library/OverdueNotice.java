@@ -38,11 +38,11 @@ public class OverdueNotice {
 	 */
 	@Override
 	public String toString(){
-		String returning = "";
+		String returning = "Today is Day: " + this.todaysDate+"\n";
 		ArrayList<Book> overdueBooks = new ArrayList<Book>();
 		for (Book book : this.patron.getBooks()){
 			returning += book.getTitle();
-			returning += " will be due at: ";
+			returning += " will be due (or is due) on Day: ";
 			returning += book.getDueDate();
 			if (book.getDueDate() < this.todaysDate){
 				overdueBooks.add(book);
@@ -50,10 +50,10 @@ public class OverdueNotice {
 			returning += '\n';
 		}
 		if(overdueBooks.size()>0){
-			returning += "Attention!!! You have overdue books: ";
+			returning += "Attention!!!\n" + this.patron + " has overdue books: ";
 			for (Book overdueBook : overdueBooks){
 				returning += overdueBook.getTitle();
-				returning += " ";
+				returning += " \t\t\n";
 			}
 		}
 		else{
