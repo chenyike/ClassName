@@ -53,7 +53,7 @@ public class OverdueNotice {
 			returning += "Attention!!!\n" + this.patron + " has overdue books: ";
 			for (Book overdueBook : overdueBooks){
 				returning += overdueBook.getTitle();
-				returning += " \t\t\n";
+				returning += " \t\t";
 			}
 		}
 		else{

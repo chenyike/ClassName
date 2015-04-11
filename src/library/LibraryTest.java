@@ -73,6 +73,52 @@ public class LibraryTest {
 		return dave;
 	}
 
+
+	@Test
+	public void testCheckNum() {
+		Patron dave = openAndServeDave();
+		//search a book
+		library.search("Time");  
+		//Now let's check the "checkNum(String[], isCheckIn)" method!
+		//if one of the number is out of range
+		library.checkNum(new String[] {"4","5","6"}, false);
+		assertTrue(library.search("Time").contains(time));
+		assertFalse(dave.getBooks().contains(time));
+
+		//even if all the numbers are in range, there are duplicated numbers, we still treat it as false entry
+		library.checkNum(new String[] {"1","1","3"}, false);
+		assertTrue(library.search("Time").contains(time));
+		assertFalse(dave.getBooks().contains(time));
+
+		//even if all the numbers are in range, there are duplicated numbers, we still treat it as false entry
+		library.checkNum(new String[] {"2","1","1"}, false);
+		assertTrue(library.search("Time").contains(time));
+		assertFalse(dave.getBooks().contains(time));
+
+		//even if all the numbers are in range, there are duplicated numbers, we still treat it as false entry
+		library.checkNum(new String[] {"1","2","1"}, false);
+		assertTrue(library.search("Time").contains(time));
+		assertFalse(dave.getBooks().contains(time));
+
+		//if all the numbers are entered within range and no duplication, but the search result only contains one book
+		library.checkNum(new String[] {"1","2","3"}, false);
+		assertTrue(library.search("Time").contains(time));
+		assertFalse(dave.getBooks().contains(time));
+
+		//if all the numbers are entered correctly, then ah-ha!
+		library.checkNum(new String[] {"1"}, false);
+		assertFalse(library.search("Time").contains(time));
+		assertTrue(dave.getBooks().contains(time));
+
+		library.serve("Dave");
+		//Now let's check the "checkNum(String[], !isCheckIn)" method!  
+		//there is no need to check duplication and out of range cases because it is covered above
+		library.checkNum(new String[] {"1"}, true);
+		assertTrue(library.search("Time").contains(time));
+		assertFalse(dave.getBooks().contains(time));
+	}
+
+
 	/**
 	 * Test method for {@link library.Library#createOverdueNotices()}.
 	 */
@@ -111,8 +157,6 @@ public class LibraryTest {
 		// check if the library allows two identical cards.
 		Patron dave1 = library.issueCard("Dave");
 		assertEquals(dave1,null);
-
-
 	}
 
 	/**

@@ -2,6 +2,8 @@ package library;
 
 import static org.junit.Assert.*;
 
+import java.util.Random;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,6 +29,8 @@ public class OverdueNoticeTest {
 
 	@Test
 	public void testOverdueNotice() {
+		System.out.println(new Random().nextInt(1));
+
 		assertEquals(daveNotice.getPatron().toString(), "Dave");
 		assertEquals(daveNotice.getTodaysDate(), 20150403);
 		
@@ -59,15 +63,15 @@ public class OverdueNoticeTest {
 		// test without overdue book
 		book.checkOut(20150823);
 		daveNotice.getPatron().take(book);
-		assertEquals(daveNotice.toString(),"Disappearing Nightly will be due at: 20150823\nNo overdue books!");
+		assertEquals(daveNotice.toString(),"Today is Day: 20150403\nDisappearing Nightly will be due (or is due) on Day: 20150823\nNo overdue books!");
 		book1.checkOut(20150725);
 		daveNotice.getPatron().take(book1);
-		assertEquals(daveNotice.toString(),"Disappearing Nightly will be due at: 20150823\n1984 will be due at: 20150725\nNo overdue books!");
+		assertEquals(daveNotice.toString(),"Today is Day: 20150403\nDisappearing Nightly will be due (or is due) on Day: 20150823\n1984 will be due (or is due) on Day: 20150725\nNo overdue books!");
 		//test with overdue books
 		book2.checkOut(20150223);
 		daveNotice.getPatron().take(book2);
-		assertEquals(daveNotice.toString(),"Disappearing Nightly will be due at: 20150823\n1984 will be due at: 20150725\nA Room With A View will be due at: 20150223\nAttention!!! You have overdue books: A Room With A View ");
-		
+		System.out.println(daveNotice.toString());
+		assertEquals(daveNotice.toString(),"Today is Day: 20150403\nDisappearing Nightly will be due (or is due) on Day: 20150823\n1984 will be due (or is due) on Day: 20150725\nA Room With A View will be due (or is due) on Day: 20150223\nAttention!!!\nDave has overdue books: A Room With A View 		");	
 	}
 
 }
